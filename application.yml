@@ -1,0 +1,13 @@
+globale:
+  message: Welcome to global micriservices environnement
+logging:
+  level:
+    root: INFO
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, refresh
+  endpoints:
+    health:
+      showdetails: always
