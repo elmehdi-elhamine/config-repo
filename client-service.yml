@@ -1,15 +1,116 @@
-# client-service.yml
+server:
+  port: 8083
 spring:
   application:
     name: client-service
+
   datasource:
-    url: jdbc:oracle:thin:@localhost:1521/CLIENTDB
-    username: client_user
-    password: client_pass
+    url: jdbc:oracle:thin:@//localhost:1521/FREE
+    username: system
+    password: client123
     driver-class-name: oracle.jdbc.OracleDriver
+
+  # HikariCP settings
+  hikari:
+    minimumIdle: 5
+    maximumPoolSize: 20
+    idleTimeout: 30000
+    maxLifetime: 2000000
+    connectionTimeout: 30000
+    poolName: HikariPoolBooks
+
+
   jpa:
+    database-platform: org.hibernate.dialect.OracleDialect
     hibernate:
+      use-new-id-generator-mappings: false
       ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate.dialect: org.hibernate.dialect.Oracle12cDialect
+      show-sql: true
+
+
+#
+eureka:
+
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    hostname: localhost
+    prefer-ip-address: true
+    ip-address: 127.0.0.1
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        # Expose all endpoints
+        include: "*"
+        # Or specify endpoints:
+        # include: health,metrics,info,prometheus,loggers,env,mappings
+      base-path: /actuator
+      cors:
+        allowed-origins: "*"
+        allowed-methods: GET,POST
+
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+      probes:
+        enabled: true
+
+    info:
+      env:
+        enabled: true
+
+    shutdown:
+      enabled: true
+
+    metrics:
+      enabled: true
+
+    prometheus:
+      enabled: true
+
+    beans:
+      enabled: true
+
+  info:
+    env:
+      enabled: true
+    git:
+      mode: full
+    java:
+      enabled: true
+    build:
+      enabled: true
+
+  metrics:
+    tags:
+      application: ${spring.application.name}
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      sla:
+        http.server.requests: 50ms,100ms,200ms,300ms
+    enable:
+      jvm: true
+      process: true
+      system: true
+
+# Custom Info Endpoint Information
+info:
+  application:
+    name: ${spring.application.name}
+    description: Banking Client Service
+    version: 1.0.0
+  environment: ${spring.profiles.active:default}
+
+# Logging for Actuator
+logging:
+  level:
+    org.springframework.actuator: INFO
+    org.springframework.web: INFO
+
